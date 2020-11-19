@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  master:
+    image: lucasfs/pg-sharding-master
+    environment: 
+      &conf-envs
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "db_test"
+      TASK_SLOT: "{{.Task.Slot}}"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.labels.type == primary
+
+    ports:
+      - target: 5432
+        published: 5432
+        mode: host
+    networks:
+      - cluster_net
+
+  shard:
+    image: lucasfs/pg-sharding-shard
+    environment: 
+      << : *conf-envs
+      MASTER_SERVICE: "master"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.labels.type == worker
+    ports:
+      - target: 5432
+        published: 5432
+        mode: host
+    networks:
+      - cluster_net
+
+networks:
+  cluster_net:
+    external: true
+    name: pg-net  
+    
