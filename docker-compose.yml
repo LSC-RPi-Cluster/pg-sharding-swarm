@@ -17,7 +17,7 @@ services:
       placement:
         max_replicas_per_node: 1
         constraints:
-          - node.labels.type == primary
+          - node.labels.type == master
 
     ports:
       - target: 5432
@@ -39,7 +39,7 @@ services:
       placement:
         max_replicas_per_node: 1
         constraints:
-          - node.labels.type == worker
+          - node.labels.type == slave
     ports:
       - target: 5432
         published: 5432
