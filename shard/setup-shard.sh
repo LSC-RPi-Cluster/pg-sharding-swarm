@@ -7,10 +7,10 @@ PG_DB=${POSTGRES_DB:=$PG_USER}
 
 if [ -z "$TASK_SLOT" ]
 then
-  echo "TASK_SLOT is not defined!"
-  exit 1
+    echo "TASK_SLOT is not defined!"
+    exit 1
 else
-  SHARD_ID=$(printf %02d $TASK_SLOT)
+    SHARD_ID=$(printf %02d $TASK_SLOT)
 fi
 
 MASTER_SERVICE=${MASTER_SERVICE:=master}
@@ -31,8 +31,8 @@ echo "host all $PG_USER all $AUTH_METHOD" >> "$PGDATA/pg_hba.conf"
 
 until pg_isready -h $MASTER_IP -p 5432 -U $PG_USER
 do
-  echo "Waiting for master node..."
-  sleep 2
+    echo "Waiting for master node..."
+    sleep 2
 done
 
 set -e

@@ -4,7 +4,14 @@ PG_USER=${POSTGRES_USER:=postgres}
 PG_PASS=$POSTGRES_PASSWORD
 AUTH_METHOD=${POSTGRES_HOST_AUTH_METHOD:=md5} 
 PG_DB=${POSTGRES_DB:=$PG_USER}
-MASTER_ID=${TASK_SLOT:=$(hostname)}
+
+if [ -z "$TASK_SLOT" ]
+then
+    echo "TASK_SLOT is not defined!"
+    exit 1
+else
+    MASTER_ID=$(printf %02d $TASK_SLOT)
+fi
 
 HOST_IP=$(hostname -i)
 
