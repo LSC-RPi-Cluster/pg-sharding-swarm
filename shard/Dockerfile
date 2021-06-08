@@ -1,4 +1,4 @@
-FROM arm32v7/postgres:12.3-alpine
+FROM lucasfs/postgres-armv7:14-beta
 
 LABEL maintainer="github.com/lucas-fs"
 
