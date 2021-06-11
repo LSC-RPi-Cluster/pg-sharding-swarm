@@ -1,6 +1,9 @@
 version: '3.8'
 
 services:
+  #################################
+  #   Postgres coordinator node   #
+  #################################
   master:
     image: lucasfs/pg-sharding-master
     environment: 
@@ -9,6 +12,8 @@ services:
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "db_test"
       TASK_SLOT: "{{.Task.Slot}}"
+      FDW_FETCH_SIZE: 100
+      FDW_BATCH_SIZE: 100
     deploy:
       restart_policy:
         condition: on-failure
@@ -18,7 +23,6 @@ services:
         max_replicas_per_node: 1
         constraints:
           - node.labels.type == master-shard
-
     ports:
       - target: 5432
         published: 5432
@@ -26,6 +30,9 @@ services:
     networks:
       - cluster_net
 
+  #################################
+  #      Postgres shard node      #
+  #################################
   shard:
     image: lucasfs/pg-sharding-shard
     environment: 

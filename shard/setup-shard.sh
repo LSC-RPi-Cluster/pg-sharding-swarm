@@ -5,6 +5,9 @@ PG_PASS=$POSTGRES_PASSWORD
 AUTH_METHOD=${POSTGRES_HOST_AUTH_METHOD:=md5} 
 PG_DB=${POSTGRES_DB:=$PG_USER}
 
+FETCH_SIZE=${FDW_FETCH_SIZE:=100}
+BATCH_SIZE=${FDW_BATCH_SIZE:=1}
+
 if [ -z "$TASK_SLOT" ]
 then
     echo "TASK_SLOT is not defined!"
@@ -26,6 +29,9 @@ echo "MASTER_SERVICE : $MASTER_SERVICE"
 echo "MASTER_IP : $MASTER_IP"
 echo "HOST_IP : $HOST_IP"
 echo "SHARD_NAME : shard_$SHARD_ID"
+echo "FDW fetch_size : $FETCH_SIZE"
+echo "FDW batch_size : $BATCH_SIZE"
+
 
 echo "host all $PG_USER all $AUTH_METHOD" >> "$PGDATA/pg_hba.conf"
 
@@ -39,7 +45,7 @@ set -e
 PGPASSWORD=$PG_PASS psql -v ON_ERROR_STOP=1 -U "$PG_USER" -d "$PG_DB" -h $MASTER_IP <<-EOSQL
     CREATE SERVER IF NOT EXISTS shard_$SHARD_ID 
     FOREIGN DATA WRAPPER postgres_fdw 
-    OPTIONS (dbname '$PG_DB', host '$HOST_IP');
+    OPTIONS (dbname '$PG_DB', host '$HOST_IP', fetch_size '$FETCH_SIZE', batch_size '$BATCH_SIZE');
 
     CREATE USER MAPPING IF NOT EXISTS for $PG_USER 
     SERVER shard_$SHARD_ID 
