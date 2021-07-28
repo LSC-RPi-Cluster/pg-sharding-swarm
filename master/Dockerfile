@@ -1,4 +1,4 @@
-FROM lucasfs/postgres-armv7:14-beta
+FROM postgres:14beta2-buster
 
 LABEL maintainer="github.com/lucas-fs"
 

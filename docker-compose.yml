@@ -27,6 +27,8 @@ services:
       - target: 5432
         published: 5432
         mode: host
+    volumes:
+      - /mnt/storage/pgdata:/var/lib/postgresql/data
     networks:
       - cluster_net
 
@@ -51,6 +53,8 @@ services:
       - target: 5432
         published: 5432
         mode: host
+    volumes:
+      - /mnt/storage/pgdata:/var/lib/postgresql/data
     networks:
       - cluster_net
 
