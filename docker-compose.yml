@@ -4,8 +4,8 @@ services:
   #################################
   #   Postgres coordinator node   #
   #################################
-  master:
-    image: lucasfs/pg-sharding-master
+  coordinator:
+    image: lucasfs/pg-sharding-coordinator
     environment: 
       &conf-envs
       POSTGRES_USER: "postgres"
@@ -22,7 +22,7 @@ services:
       placement:
         max_replicas_per_node: 1
         constraints:
-          - node.labels.type == master-shard
+          - node.labels.type == coordinator
     ports:
       - target: 5432
         published: 5432
@@ -39,7 +39,7 @@ services:
     image: lucasfs/pg-sharding-shard
     environment: 
       << : *conf-envs
-      MASTER_SERVICE: "master"
+      COORDINATOR_SERVICE: "coordinator"
     deploy:
       restart_policy:
         condition: on-failure
